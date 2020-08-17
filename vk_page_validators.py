@@ -1,6 +1,8 @@
 import xml.etree.ElementTree as XMLElementTree
-import constants
+
 import aiohttp
+
+import constants
 
 
 class VKPageValidators:

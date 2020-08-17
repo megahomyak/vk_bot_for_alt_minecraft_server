@@ -1,12 +1,13 @@
 import asyncio
+
 import aiohttp
-import utils
 from asyncrcon import AsyncRCON
 
 import constants
-from vk_page_validators import VKPageValidators
+import utils
 from messages_worker import MessagesWorker
 from rcon_worker import RConWorker
+from vk_page_validators import VKPageValidators
 
 
 class MainLogic:
