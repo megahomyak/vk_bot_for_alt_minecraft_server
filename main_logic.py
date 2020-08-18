@@ -5,9 +5,9 @@ from asyncrcon import AsyncRCON
 
 import constants
 import utils
-from vk_worker import VKWorker
 from rcon_worker import RConWorker
 from vk_page_validators import VKPageValidators
+from vk_worker import VKWorker
 
 
 class MainLogic:
@@ -34,13 +34,13 @@ class MainLogic:
         async for message_info in self.vk_worker.listen():
             peer_id = message_info["peer_id"]
             text = message_info["text"]
+            reply = self.vk_worker.reply_functions_factory(peer_id)
             if text.startswith(constants.COMMAND_ADD_NICKNAME):
                 nickname = text[len(constants.COMMAND_ADD_NICKNAME):]
                 if utils.validate_nickname(nickname):
                     from_id = message_info["from_id"]
                     if from_id in self.ids_of_not_valid_users:
-                        await self.vk_worker.reply(
-                            peer_id,
+                        await reply(
                             constants.PAGE_NOT_VALID_MESSAGE.format(nickname)
                         )
                     else:
@@ -50,20 +50,19 @@ class MainLogic:
                         if await self.vk_page_validators.checks_facade(
                             sender_page_info
                         ):
-                            await self.vk_worker.reply(
-                                peer_id,
+                            await reply(
                                 constants.NICKNAME_ADDED_MESSAGE.format(
                                     nickname
                                 )
                             )
                         else:
-                            await self.vk_worker.reply(
-                                peer_id,
-                                constants.PAGE_NOT_VALID_MESSAGE
+                            await reply(
+                                constants.PAGE_NOT_VALID_MESSAGE.format(
+                                    nickname
+                                )
                             )
                 else:
-                    await self.vk_worker.reply(
-                        peer_id,
+                    await reply(
                         constants.NICKNAME_IS_NOT_VALID.format(nickname)
                     )
 

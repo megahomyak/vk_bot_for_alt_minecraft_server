@@ -15,6 +15,11 @@ class VKWorker(SimpleAVK):
             }
         )
 
+    def reply_functions_factory(self, peer_id: int):
+        async def wrapper(text: str) -> None:
+            await self.reply(peer_id, text)
+        return wrapper
+
     async def get_page_info(self, page_id: int) -> dict:
         users_info = await self.call_method(
             "users.get",
