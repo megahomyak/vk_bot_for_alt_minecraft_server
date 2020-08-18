@@ -5,7 +5,7 @@ from asyncrcon import AsyncRCON
 
 import constants
 import utils
-from messages_worker import MessagesWorker
+from vk_worker import VKWorker
 from rcon_worker import RConWorker
 from vk_page_validators import VKPageValidators
 
@@ -13,7 +13,7 @@ from vk_page_validators import VKPageValidators
 class MainLogic:
 
     def __init__(
-            self, messages_worker: MessagesWorker,
+            self, messages_worker: VKWorker,
             vk_page_validators: VKPageValidators,
             rcon_worker: RConWorker) -> None:
         self.messages_worker = messages_worker
@@ -70,7 +70,7 @@ if __name__ == '__main__':
     async def main(event_loop: asyncio.AbstractEventLoop):
         async with aiohttp.ClientSession(loop=event_loop) as aiohttp_session:
             main_logic = MainLogic(
-                MessagesWorker(
+                VKWorker(
                     aiohttp_session,
                     constants.VK_GROUP_TOKEN,
                     constants.VK_GROUP_ID

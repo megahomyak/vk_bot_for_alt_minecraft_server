@@ -3,7 +3,7 @@ import random
 from simple_avk import SimpleAVK
 
 
-class MessagesWorker(SimpleAVK):
+class VKWorker(SimpleAVK):
 
     async def reply(self, peer_id: int, text: str) -> None:
         await self.call_method(
