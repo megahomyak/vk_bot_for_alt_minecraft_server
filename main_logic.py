@@ -13,10 +13,10 @@ from vk_page_validators import VKPageValidators
 class MainLogic:
 
     def __init__(
-            self, messages_worker: VKWorker,
+            self, vk_worker: VKWorker,
             vk_page_validators: VKPageValidators,
             rcon_worker: RConWorker) -> None:
-        self.messages_worker = messages_worker
+        self.vk_worker = vk_worker
         self.vk_page_validators = vk_page_validators
         self.rcon_worker = rcon_worker
         with open("not_valid_users.txt", "r") as f:
@@ -31,34 +31,38 @@ class MainLogic:
             f.write(", ".join(map(str, self.ids_of_not_valid_users)))
 
     async def start(self):
-        async for message_info in self.messages_worker.listen():
+        async for message_info in self.vk_worker.listen():
             peer_id = message_info["peer_id"]
             text = message_info["text"]
             if text.startswith(constants.COMMAND_ADD_NICKNAME):
                 nickname = text[len(constants.COMMAND_ADD_NICKNAME):]
                 if utils.validate_nickname(nickname):
-                    if message_info["from_id"] in self.ids_of_not_valid_users:
-                        await self.messages_worker.reply(
+                    from_id = message_info["from_id"]
+                    if from_id in self.ids_of_not_valid_users:
+                        await self.vk_worker.reply(
                             peer_id,
                             constants.PAGE_NOT_VALID_MESSAGE.format(nickname)
                         )
                     else:
+                        sender_page_info = await self.vk_worker.get_page_info(
+                            from_id
+                        )
                         if await self.vk_page_validators.checks_facade(
-                            message_info
+                            sender_page_info
                         ):
-                            await self.messages_worker.reply(
+                            await self.vk_worker.reply(
                                 peer_id,
                                 constants.NICKNAME_ADDED_MESSAGE.format(
                                     nickname
                                 )
                             )
                         else:
-                            await self.messages_worker.reply(
+                            await self.vk_worker.reply(
                                 peer_id,
                                 constants.PAGE_NOT_VALID_MESSAGE
                             )
                 else:
-                    await self.messages_worker.reply(
+                    await self.vk_worker.reply(
                         peer_id,
                         constants.NICKNAME_IS_NOT_VALID.format(nickname)
                     )

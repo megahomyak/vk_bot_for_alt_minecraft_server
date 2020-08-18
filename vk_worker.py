@@ -14,3 +14,12 @@ class VKWorker(SimpleAVK):
                 "peer_id": peer_id
             }
         )
+
+    async def get_page_info(self, page_id: int) -> dict:
+        users_info = await self.call_method(
+            "users.get",
+            {
+                "user_ids": str(page_id)
+            }
+        )
+        return users_info[0]
