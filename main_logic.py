@@ -19,15 +19,17 @@ class MainLogic:
         self.vk_worker = vk_worker
         self.vk_page_validators = vk_page_validators
         self.rcon_worker = rcon_worker
-        with open("not_valid_users.txt", "r") as f:
+        with open(constants.NOT_VALID_USERS_FILENAME, "r") as f:
             not_valid_users: str = f.read()
             self.ids_of_not_valid_users = [
                 int(user_id.strip())
-                for user_id in not_valid_users.split(",")
+                for user_id in not_valid_users.split(
+                    constants.NOT_VALID_USERS_SEPARATOR
+                )
             ]
 
     def save_not_valid_users_list(self):
-        with open("not_valid_users.txt", "w") as f:
+        with open(constants.NOT_VALID_USERS_FILENAME, "w") as f:
             f.write(", ".join(map(str, self.ids_of_not_valid_users)))
 
     async def start(self):
